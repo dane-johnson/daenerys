@@ -1,0 +1,19 @@
+(def defn (macro (name args expression) `(def ~name (fn ~args ~expression))))
+(def defmacro (macro (name args expression) `(def ~name (macro ~args ~expression))))
+(defmacro or
+  (x y)
+  `(if ~x ~x ~y))
+(defmacro and
+  (x y)
+  `(if ~x ~y))
+(defn not (x)
+  (if x
+    False
+    True))
+(defn map (f l)
+  (if l
+    (cons (f (car l)) (map f (cdr l)))
+    nil))
+(defn inc (x) (+ x 1))
+(defn dec (x) (- x 1))
+(defn zero? (x) (= 0 x))

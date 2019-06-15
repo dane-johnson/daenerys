@@ -13,7 +13,10 @@ def init():
 
 def repl():
   while True:
-    print(lispprint(eval(parse(input("> ")), GLOBAL_ENV)))
+    try:
+      print(lispprint(eval(parse(input("> ")), GLOBAL_ENV)))
+    except Exception as e:
+      print(e)
 
 if __name__ == "__main__":
   init()

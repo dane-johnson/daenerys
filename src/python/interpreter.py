@@ -1,5 +1,6 @@
 import operator as op
 from types import LambdaType, new_class
+import builtins
 
 def cons (a, b):
   return (a,) + b
@@ -77,6 +78,8 @@ DEF = Symbol('def')
 LIST = Symbol('list')
 LET = Symbol('let')
 MACRO = Symbol('macro')
+DOT = Symbol('.')
+NEW = Symbol('new')
 
 def eat_whitespace(prgm, i):
   while i < len(prgm) and prgm[i] in frozenset(" \n\t"):
@@ -105,7 +108,7 @@ def lexan(prgm):
         j += 1
       tokens.append('"' + prgm[i+1:j] + '"')
       i = j + 1
-    elif char in frozenset("0123456789."):
+    elif char in frozenset("0123456789"):
       j = i + 1
       while not is_delimiter(prgm, j):
         j += 1
@@ -178,6 +181,7 @@ def is_self_evaluating(exp):
     isinstance(exp, float) or \
     isinstance(exp, Keyword) or \
     isinstance(exp, bool) or \
+    isinstance(exp, int) or \
     is_nil(exp)
 
 def is_symbol(exp):
@@ -245,6 +249,15 @@ def eval(exp, env):
       params = cadr(exp)
       expression = caddr(exp)
       return Macro(params, expression)
+    if car(exp) == DOT:
+      pyobject = eval(cadr(exp), env)
+      method = caddr(exp)
+      ops = evallist(cdddr(exp), env)
+      return wrap_python_fn(getattr(pyobject, method.symbol))(ops)
+    if car(exp) == NEW:
+      classname = cadr(exp)
+      args = evallist(cddr(exp), env)
+      return wrap_python_fn(getattr(builtins, classname.symbol))(args)
     if car(exp) == DEF:
       define_variable(cadr(exp), eval(caddr(exp), env), env)
       return ()

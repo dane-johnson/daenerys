@@ -1,6 +1,7 @@
 import operator as op
 from types import LambdaType, new_class
 import builtins
+py_eval = eval
 
 def cons (a, b):
   return (a,) + b
@@ -80,6 +81,8 @@ LET = Symbol('let')
 MACRO = Symbol('macro')
 DOT = Symbol('.')
 NEW = Symbol('new')
+APPLY = Symbol('apply')
+IMPORT = Symbol('import')
 
 def eat_whitespace(prgm, i):
   while i < len(prgm) and prgm[i] in frozenset(" \n\t"):
@@ -258,9 +261,14 @@ def eval(exp, env):
       classname = cadr(exp)
       args = evallist(cddr(exp), env)
       return wrap_python_fn(getattr(builtins, classname.symbol))(args)
+    if car(exp) == IMPORT:
+      define_variable(cadr(exp), __import__(cadr(exp).symbol), env)
+      return ()
     if car(exp) == DEF:
       define_variable(cadr(exp), eval(caddr(exp), env), env)
       return ()
+    if car(exp) == APPLY:
+      return eval(cadr(exp), env)(eval(caddr(exp), env))
     if is_lambda(car(exp)):
       return car(exp)(evallist(cdr(exp), env))
     if is_macro(car(exp)):

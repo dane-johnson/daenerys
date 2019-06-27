@@ -1,3 +1,4 @@
+(import operator)
 (def defn (macro (name args expression) `(def ~name (fn ~args ~expression))))
 (def defmacro (macro (name args expression) `(def ~name (macro ~args ~expression))))
 (defmacro or
@@ -14,6 +15,10 @@
   (if l
     (cons (f (car l)) (map f (cdr l)))
     nil))
+(defn fold (f l s)
+  (if l
+    (fold f (cdr l) (f s (car l)))
+    s))
 (defn inc (x) (+ x 1))
 (defn dec (x) (- x 1))
 (defn zero? (x) (= 0 x))

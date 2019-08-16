@@ -90,6 +90,11 @@ def eat_whitespace(prgm, i):
     i += 1
   return i
 
+def eat_comment(prgm, i):
+  while i < len(prgm) and prgm[i] != "\n":
+    i += 1
+  return i
+
 def is_delimiter(prgm, i):
   return i >= len(prgm) or prgm[i] in frozenset("(){}[] \t\n")
 
@@ -101,7 +106,9 @@ def lexan(prgm):
     if i == len(prgm):
       break
     char = prgm[i]
-    if char in frozenset("':`~#(){}[]"):
+    if char == ";":
+      i = eat_comment(prgm, i)
+    elif char in frozenset("':`~#(){}[]"):
       tokens.append(char)
       i += 1
     elif char == '"':

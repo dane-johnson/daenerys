@@ -1,5 +1,6 @@
 (import operator)
 
+;; Nice macros for making functions and macros
 (def defn (macro (name args expression) `(def ~name (fn ~args ~expression))))
 (def defmacro (macro (name args expression) `(def ~name (macro ~args ~expression))))
 

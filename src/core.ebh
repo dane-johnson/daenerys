@@ -22,3 +22,12 @@
 (defn inc (x) (+ x 1))
 (defn dec (x) (- x 1))
 (defn zero? (x) (= 0 x))
+
+
+(defn + (& nums)
+  (fold +' nums 0))
+
+(defn - (x & rest)
+  (if rest
+    (fold -' rest x)
+    (-' 0 x)))

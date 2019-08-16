@@ -80,6 +80,7 @@ LIST = Symbol('list')
 LET = Symbol('let')
 MACRO = Symbol('macro')
 DOT = Symbol('.')
+AMPERSAND = Symbol('&')
 NEW = Symbol('new')
 APPLY = Symbol('apply')
 IMPORT = Symbol('import')
@@ -244,9 +245,16 @@ def eval(exp, env):
     if car(exp) == LIST:
       return evallist(cdr(exp), env)
     if car(exp) == FN:
+      vararg = False
       params = cadr(exp)
+      if len(params) > 1 and params[-2] == AMPERSAND:
+        vararg = True
+        params = params[:-2] + params[-1:]
       expression = caddr(exp)
-      fn = lambda args: eval(expression, extend_environment(params, args, env))
+      if not vararg:
+        fn = lambda args: eval(expression, extend_environment(params, args, env))
+      else:
+        fn = lambda args: eval(expression, extend_environment(params, args[:len(params)-1] + (args[len(params)-1:],), env))
       return fn
     if car(exp) == MACRO:
       params = cadr(exp)
@@ -349,7 +357,7 @@ PRINT = make_builtin('print', lambda x: print(lispprint(x)))
 CONS = make_builtin('cons', cons)
 CAR = make_builtin('car', car)
 CDR = make_builtin('cdr', cdr)
-ADD = make_builtin("+", op.add)
-SUB = make_builtin("-", op.sub)
+ADD = make_builtin("+'", op.add)
+SUB = make_builtin("-'", op.sub)
 EQ = make_builtin("=", op.eq)
 EVAL = make_builtin("eval", eval)

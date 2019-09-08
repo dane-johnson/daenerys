@@ -4,7 +4,7 @@ from python.interop import load_module
 
 def init():
   global GLOBAL_ENV
-  builtins = [EQ, IS_SYMBOL, CAR, CDR, CONS, EVAL, PRINT]
+  builtins = [EQ, IS_SYMBOL, CAR, CDR, CONS, EVAL, PRINT, STR]
   frame = {}
   for symbol, fn in builtins:
     frame[symbol] = fn

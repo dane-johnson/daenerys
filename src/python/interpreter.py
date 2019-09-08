@@ -43,6 +43,8 @@ class Symbol:
     return cmp(hash(self), hash(o))
   def __hash__(self):
     return hash(self.symbol)
+  def __str__(self):
+    return self.symbol
   def __repr__(self):
     return "<symbol %s>" % self.symbol
 
@@ -123,7 +125,10 @@ def lexan(prgm):
       j = i + 1
       while not is_delimiter(prgm, j):
         j += 1
-      tokens.append(float(prgm[i:j]))
+      if "." in prgm[i:j]:
+        tokens.append(float(prgm[i:j]))
+      else:
+        tokens.append(int(prgm[i:j]))
       i = j
     else:
       j = i + 1
@@ -329,6 +334,8 @@ def define_variable(var, val, env):
     val.__name__ = "<fn %s>" % var.symbol
 
 def lispprint(exp):
+  if isinstance(exp, str):
+    return '"%s"' % exp
   if is_self_evaluating(exp):
     return repr(exp)
   if is_symbol(exp):
@@ -366,3 +373,4 @@ CAR = make_builtin('car', car)
 CDR = make_builtin('cdr', cdr)
 EQ = make_builtin("=", op.eq)
 EVAL = make_builtin("eval", eval)
+STR = make_builtin("->str", lambda x: str(x))

@@ -34,7 +34,7 @@
   (fold +' nums 0))
 
 (defn str (& xs)
-  (fold (fn (a b) (+' a (->str b))) xs ""))
+  (fold (fn (a b) (+' a (new str b))) xs ""))
 
 (defn -' (a b)
   (. operator sub a b))
